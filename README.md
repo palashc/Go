@@ -1,2 +1,2 @@
 # Go
-Practice Exercises in Go
+Practice Exercises in Go given here: https://gophercises.com/

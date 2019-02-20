@@ -34,15 +34,16 @@ func main() {
 	if err != nil {
 		exit("failed to parse csv file")
 	}
-	problems := parseLines(lines)
-
+	problemsMap := parseLines(lines)
 	//timer
 	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
 
 	//show problems to user
 	correct_answers := 0
-	for i, problem := range problems {
-		fmt.Printf("Problem #%d: %s = ", i+1, problem.question)
+	qNum := 0
+	for q, a := range problemsMap {
+		qNum++
+		fmt.Printf("Problem #%d: %s = ", qNum, q)
 		answerChannel := make(chan string)
 		go func() {
 			// read answer
@@ -53,26 +54,24 @@ func main() {
 		}()
 		select {
 		case <-timer.C:
-			fmt.Printf("\nYou got %d/%d correct answers!", correct_answers, len(problems))
+			fmt.Printf("\nYou got %d/%d correct answers!", correct_answers, len(problemsMap))
 			return
 		case ans := <-answerChannel:
-			if ans == problem.answer {
+			if ans == a {
 				correct_answers++
 			}
 		}
 	}
-	fmt.Printf("You got %d/%d correct answers!", correct_answers, len(problems))
+	fmt.Printf("You got %d/%d correct answers!", correct_answers, len(problemsMap))
 }
 
-func parseLines(lines [][]string) []problem {
-	probs := make([]problem, len(lines))
-	for i, line := range lines {
-		probs[i] = problem{
-			question: line[0],
-			answer:   strings.TrimSpace(line[1]),
-		}
+func parseLines(lines [][]string) map[string]string {
+	//Use map instead of struct array since iteration over maps in Go is random
+	qaMap := make(map[string]string, len(lines))
+	for _, line := range lines {
+		qaMap[line[0]] = strings.TrimSpace(line[1])
 	}
-	return probs
+	return qaMap
 }
 
 func exit(msg string) {

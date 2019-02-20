@@ -1,9 +1,9 @@
 package main
 
 import (
+	"2-UrlShortener/urlshort"
 	"fmt"
 	"net/http"
-	"urlshort"
 )
 
 func main() {

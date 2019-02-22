@@ -23,7 +23,7 @@ func main() {
 		exit("Unable to decode json file")
 	}
 
-	h := cyoa.NewHandler(story)
+	h := cyoa.NewHandler(story, nil)
 	fmt.Printf("starting cyoa server at port %d\n", *port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), h))
 }

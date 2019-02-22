@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -23,9 +24,19 @@ func main() {
 		exit("Unable to decode json file")
 	}
 
-	h := cyoa.NewHandler(story)
+	h := cyoa.NewHandler(story, cyoa.WithPathFn(pathFn))
+	mux := http.NewServeMux()
+	mux.Handle("/story/", h)
 	fmt.Printf("starting cyoa server at port %d\n", *port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), h))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), mux))
+}
+
+func pathFn(r *http.Request) string {
+	path := strings.TrimSpace(r.URL.Path)
+	if path == "/story" || path == "/story/" {
+		path = "/story/intro"
+	}
+	return path[len("/story/"):]
 }
 
 func exit(msg string) {

@@ -45,6 +45,12 @@ func WithTemplate(t *template.Template) HandlerOptions {
 	}
 }
 
+func WithPathFn(fn func(r *http.Request) string) HandlerOptions {
+	return func(h *handler) {
+		h.pathFn = fn
+	}
+}
+
 func defaultPathFn(r *http.Request) string {
 	path := strings.TrimSpace(r.URL.Path)
 	if path == "" || path == "/" {
@@ -97,7 +103,7 @@ var defaultHTTPTemplate = `
       {{if .Options}}
         <ul>
         {{range .Options}}
-          <li><a href="/{{.Chapter}}">{{.Text}}</a></li>
+          <li><a href="/story/{{.Chapter}}">{{.Text}}</a></li>
         {{end}}
         </ul>
       {{else}}
